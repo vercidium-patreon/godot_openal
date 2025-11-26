@@ -1,0 +1,61 @@
+﻿namespace OpenALAudio;
+
+public unsafe partial class ALManager
+{
+    void DestroyAllAudioSources(Node root)
+    {
+        foreach (var child in root.GetChildren())
+        {
+            if (child is ALSource3D source)
+                source.OnDeviceDestroyed();
+
+            DestroyAllAudioSources(child);
+        }
+    }
+
+    public void DestroyAll()
+    {
+        // Sanity check
+        if (ALDevice == null || ALContext == null)
+        {
+            Debug.Assert(false);
+            return;
+        }
+
+        // Delete sources before effects
+        DestroyAllAudioSources(GetTree().Root);
+
+        listenerReverbEffect.Dispose();
+        listenerReverbEffect = null;
+
+        // Delete microphone device
+        CloseCaptureDevice();
+        ALCaptureDevice = null;
+
+        // Delete context
+        AL.MakeContextCurrent(IntPtr.Zero);
+        ALContext.Destroy();
+        ALContext = null;
+
+        // Delete device
+        ALDevice.Close();
+        ALDevice = null;
+    }
+
+    public void CancelLoadingAndDestroy()
+    {
+        // Tell the background sound-loading threads to stop loading
+        SoundLoader.CancelLoadingSounds = true;
+
+        // Wait for all threads to finish
+        foreach (var kv in GlobalSoundStorage)
+            kv.Value.WaitForTasks();
+
+        GlobalSoundStorage.Clear();
+        SoundLoader.CancelLoadingSounds = false;
+
+        // Delete everything - unfortunately we can't copy data from buffers in one OpenAL context to another. We need to reload all OGG files :(
+        // TODO - use alcReopenDeviceSOFT to change between devices smoothly
+        DestroyAll();
+    }
+}

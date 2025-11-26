@@ -1,0 +1,268 @@
+namespace OpenALAudio;
+
+[Tool]
+public unsafe partial class ALManager : Node
+{
+    public static ALManager instance;
+    public bool Initialised => ALDevice != null;
+
+    public override void _Ready()
+    {
+        // Ensure lists are up to date
+        RefreshDeviceLists();
+        NotifyPropertyListChanged();
+
+        if (Engine.IsEditorHint())
+            return;
+
+        if (instance != null && instance != this)
+        {
+            GD.PrintErr("ALManager already initialised. You can only have one ALManager node.");
+            QueueFree();
+            return;
+        }
+
+        instance = this;
+
+        if (!Initialised)
+        {
+            CreateDeviceAndContext();
+            LoadAudioFiles();
+        }
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Engine.IsEditorHint())
+            return;
+
+        var camera = GetViewport().GetCamera3D();
+        var cameraPitch = camera.GlobalRotation.X;
+        var cameraYaw = camera.GlobalRotation.Y;
+
+        UpdateListener(camera.GlobalPosition, cameraPitch, cameraYaw);
+
+        ALContext.Process();
+        DisposeFinishedSources();
+
+        if (MicrophoneEnabled)
+            ALCaptureDevice?.Update();
+    }
+
+    public override void _ExitTree()
+    {
+        if (Initialised)
+        {
+            Debug.Assert(instance != null);
+            Debug.Assert(ALDevice != null);
+            Debug.Assert(ALContext != null);
+
+            CancelLoadingAndDestroy();
+            instance = null;
+        }
+    }
+
+    float _masterVolume = 1;
+    bool _hrtfEnabled = true;
+    ALDistanceModel _distanceModel = ALDistanceModel.InverseDistance;
+    float _metersPerUnit = 1;
+    float _speedOfSound = 343;
+    int _maximumMonoSources = 16;
+    int _maximumStereoSources = 240;
+    int _maximumAuxiliarySends = 1;
+    int _sampleRate = 44100;
+    int _outputDeviceIndex;
+    int _inputDeviceIndex;
+    bool _microphoneEnabled;
+    int _microphoneThreshold;
+
+    [Export]
+    public float MasterVolume
+    {
+        get => _masterVolume;
+        set => UpdateProperty(ref _masterVolume, value, SetListenerGain);
+    }
+
+    [Export]
+    public bool HRTFEnabled
+    {
+        get => _hrtfEnabled;
+        set => UpdateProperty(ref _hrtfEnabled, value, SetHRTFEnabled);
+    }
+
+    [Export]
+    public ALDistanceModel DistanceModel
+    {
+        get => _distanceModel;
+        set => UpdateProperty(ref _distanceModel, value, SetDistanceModel);
+    }
+
+    [Export]
+    public float MetersPerUnit
+    {
+        get => _metersPerUnit;
+        set => UpdateProperty(ref _metersPerUnit, value, SetMetersPerUnit);
+    }
+
+    [Export]
+    public float SpeedOfSound
+    {
+        get => _speedOfSound;
+        set => UpdateProperty(ref _speedOfSound, value, SetSpeedOfSound);
+    }
+
+    [Export]
+    public int MaximumMonoSources
+    {
+        get => _maximumMonoSources;
+        set => UpdateProperty(ref _maximumMonoSources, value, (v) => CantChangeAtRuntime("MaximumMonoSources", _maximumMonoSources, v));
+    }
+
+    [Export]
+    public int MaximumStereoSources
+    {
+        get => _maximumStereoSources;
+        set => UpdateProperty(ref _maximumStereoSources, value, (v) => CantChangeAtRuntime("MaximumStereoSources", _maximumStereoSources, v));
+    }
+
+    [Export]
+    public int MaximumAuxiliarySources
+    {
+        get => _maximumAuxiliarySends;
+        set => UpdateProperty(ref _maximumAuxiliarySends, value, (v) => CantChangeAtRuntime("MaximumAuxiliarySends", _maximumAuxiliarySends, v));
+    }
+
+    [Export]
+    public int SampleRate
+    {
+        get => _sampleRate;
+        set => UpdateProperty(ref _sampleRate, value, SetSampleRate);
+    }
+
+    [Export]
+    public bool MicrophoneEnabled
+    {
+        get => _microphoneEnabled;
+        set => UpdateProperty(ref _microphoneEnabled, value, SetMicrophoneEnabled);
+    }
+
+    [Export]
+    public int MicrophoneThreshold
+    {
+        get => _microphoneThreshold;
+        set => UpdateProperty(ref _microphoneThreshold, value);
+    }
+
+    string _outputDeviceName;
+    string _inputDeviceName;
+
+    // Properties for internal access to device names
+    string OutputDeviceName
+    {
+        get
+        {
+            return _outputDeviceName;
+        }
+        set
+        {
+            _outputDeviceName = value;
+            RecreateDevice();
+        }
+    }
+
+    string InputDeviceName
+    {
+        get
+        {
+            return _inputDeviceName;
+        }
+        set
+        {
+            _inputDeviceName = value;
+            RecreateCaptureDevice();
+        }
+    }
+
+    public override Godot.Collections.Array<Godot.Collections.Dictionary> _GetPropertyList()
+    {
+        var properties = new Godot.Collections.Array<Godot.Collections.Dictionary>();
+
+        if (OutputDeviceList.Count == 0 || InputDeviceList.Count == 0)
+            RefreshDeviceLists();
+
+        properties.Add(new Godot.Collections.Dictionary
+        {
+            { "name", "OutputDeviceName" },
+            { "type", (int)Variant.Type.String },
+            { "usage", (int)(PropertyUsageFlags.Default) },
+            { "hint", (int)PropertyHint.Enum },
+            { "hint_string", OutputDeviceList.Count > 0 ? string.Join(",", OutputDeviceList) : "" }
+        });
+
+        properties.Add(new Godot.Collections.Dictionary
+        {
+            { "name", "InputDeviceName" },
+            { "type", (int)Variant.Type.String },
+            { "usage", (int)(PropertyUsageFlags.Default) },
+            { "hint", (int)PropertyHint.Enum },
+            { "hint_string", InputDeviceList.Count > 0 ? string.Join(",", InputDeviceList) : "" }
+        });
+
+        return properties;
+    }
+
+    public override Variant _Get(StringName property)
+    {
+        if (property == "InputDeviceName")
+        {
+            var value = _inputDeviceName ?? "";
+            return value;
+        }
+
+        if (property == "OutputDeviceName")
+        {
+            var value = _outputDeviceName ?? "";
+            return value;
+        }
+
+        return default;
+    }
+
+    public override bool _Set(StringName property, Variant value)
+    {
+        if (property == "InputDeviceName")
+        {
+            _inputDeviceName = value.AsString();
+            RecreateCaptureDevice();
+            return true;
+        }
+
+        if (property == "OutputDeviceName")
+        {
+            _outputDeviceName = value.AsString();
+            RecreateDevice();
+            return true;
+        }
+
+        return false;
+    }
+
+    // samples is a short*, i.e. 2 bytes per sample
+    public delegate void MicrophoneDataCallback(IntPtr samples, int sampleCount);
+    public event MicrophoneDataCallback OnMicrophoneData;
+
+    void UpdateProperty<T>(ref T field, T value, Action<T> updateAction = null) where T : struct
+    {
+        if (!field.Equals(value))
+        {
+            field = value;
+            updateAction?.Invoke(value);
+        }
+    }
+
+    void CantChangeAtRuntime<T>(string property, T currentValue, T newValue)
+    {
+        if (Initialised)
+            GD.PushWarning($"[OpenAL] The {property} property cannot be changed at runtime - please restart for changes to take effect. Current value: {currentValue}, new value: {newValue}");
+    }
+}
