@@ -5,7 +5,7 @@ This plugin provides custom nodes for using OpenAL Soft directly in Godot, bypas
 ## Dependencies
 
 - This project uses the [openal_soft_bindings](https://github.com/vercidium-patreon/openal_soft_bindings) repo to invoke OpenAL Soft functions via C#. You can add this to your C# project as a [NuGet package](https://www.nuget.org/packages/openal_soft_bindings).
-- The OpenAL DLL `soft_oal.dll` must be in the build directory at runtime. It can be obtained from the [OpenAL Soft](https://github.com/kcat/openal-soft/releases/tag/1.24.3) repository.
+- The OpenAL DLL `soft_oal.dll` must be in the build directory at runtime. A copy of OpenAL Soft v1.25.0 is included in this repository. It can also be obtained from the [OpenAL Soft](https://github.com/kcat/openal-soft/releases/tag/1.24.3) repository. 
 
 ## Project Structure
 
