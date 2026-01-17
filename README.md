@@ -2,50 +2,45 @@
 
 This plugin provides custom nodes for using OpenAL Soft directly in Godot, bypassing Godot's built-in audio system.
 
-## Project Structure
-
-```
-addons/godot_openal/
-├── nodes/
-│   ├── ALSource3D.cs    # 3D audio source node
-│   └── ALManager.cs     # Node that manages OpenAL device + context
-├── plugin.cfg                     # Plugin configuration
-├── plugin.gd                      # Plugin registration script
-```
-
-## Custom Nodes
-
-### ALSource3D
-
-A 3D audio source node that uses OpenAL for playback. Replace `AudioStreamPlayer3D` with this.
-
-**Properties:**
-
-- `Volume` (0.0 - 1.0): Audio volume
-- `Pitch` (0.5 - 2.0): Playback pitch
-- `MaxDistance`: Maximum audible distance
-- `ReferenceDistance`: Distance at which volume is unchanged
-- `Looping`: Whether audio should loop
-- `Stream`: AudioStream to play
-
-**Methods:**
-
-- `Play()`: Start playback
-- `Stop()`: Stop playback
-- `Pause()`: Pause playback
-- `IsPlaying()`: Check if currently playing
-
-### ALManager
-
-Node that manages the OpenAL context
-
 ## Setup Instructions
 
 ### 1. Enable the Plugin
 
-1. Open your Godot project
-2. Go to `Project > Project Settings > Plugins`
-3. Enable "OpenAL Audio"
+1. Copy the `godot_openal` folder to the `your_game/addons/` folder
+2. Open Godot
+3. Ensure your C# solution is created: `Project > Tools > C# > Create C# Solution`
+4. Enable `godot_openal` in `Project > Project Settings > Plugins`
+
+If you get the below error, make sure you've created a C# solution first (step 3 above):
+
+```
+godot_openal: No C# solution found. Please create a C# solution first (Project → Tools → C# → Create C# Solution)
+```
+
+After creating a C# project, disable and enable the `godot_openal` plugin in `Project > Project Settings > Plugins`.
+
+#### Automatic Dependency Setup
+
+The plugin setup script in `addons/godot_openal/plugin.gd` will perform some setup logic for you. First, it will add this to your project's `.csproj` file:
+
+```xml
+<PropertyGroup>
+    <!-- Allow unsafe code (required for buffering audio data to OpenAL Soft) -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+</PropertyGroup>
+
+<ItemGroup>
+    <!-- C# bindings for OpenAL Soft -->
+    <PackageReference Include="openal_soft_bindings" Version="1.0.3" />
+
+    <!-- C# bindings for OpenAL Soft -->
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="BunLabs.NAudio.Flac" Version="2.0.1" />
+    <PackageReference Include="NVorbis" Version="0.10.5" />
+</ItemGroup>
+```
+
+Second, it will copy `soft_oal.dll` to your project root, which is where your project searches for `.dll` files when it runs.
 
 ### 2. Create an ALManager
 In your main scene, add an `ALManager` node:
@@ -53,6 +48,8 @@ In your main scene, add an `ALManager` node:
 ![Scene tree with ALManager child nodes](docs/al_manager_node.png)
 
 The `ALManager` node overrides Godot's inbuilt audio system, and has settings for controlling volume, enabling HRTF, output/input device, etc.
+
+To verify your installation worked, the Output Device Name field should be populated in the inspector
 
 ### 2. Play a Sound
 
