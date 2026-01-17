@@ -37,6 +37,13 @@ public unsafe partial class ALManager : Node
             return;
 
         var camera = GetViewport().GetCamera3D();
+
+        if (camera == null)
+        {
+            GD.PushError("godot_openal: no Camera3D found");
+            return;
+        }
+        
         var cameraPitch = camera.GlobalRotation.X;
         var cameraYaw = camera.GlobalRotation.Y;
 
