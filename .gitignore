@@ -1,1 +1,2 @@
-*.cs.uid
+# Godot UIDs
+*.uid
