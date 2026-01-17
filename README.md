@@ -47,16 +47,17 @@ Node that manages the OpenAL context
 2. Go to `Project > Project Settings > Plugins`
 3. Enable "OpenAL Audio"
 
-### 4. Add Icons (Optional)
+### 2. Create an ALManager
+In your main scene, add an `ALManager` node:
 
-Create SVG icons in `addons/godot_openal/icons/`:
+![Scene tree with ALManager child nodes](docs/al_manager_node.png)
 
-- `audio_source_icon.svg`
-- `listener_icon.svg`
+The `ALManager` node overrides Godot's inbuilt audio system, and has settings for controlling volume, enabling HRTF, output/input device, etc.
 
-Or remove the icon parameters from `plugin.gd` if you don't want custom icons.
+### 2. Play a Sound
 
-## Integration Notes
+Create an `ALSource3D` node and set its `Sound Name` to the path of the sound in the `res://audio` folder. To play the sound, invoke `.Play()` on the node via GDScript or C#.
 
-- The nodes automatically update their 3D positions every frame
-- The manager handles OpenAL context creation/destruction
+If your sound files live in a different folder, you can set a custom path using the `audio/openal_sound_folder.custom` setting:
+
+![Project Settings > Audio > OpenAL sound folder setting](docs/custom_audio_folder.png)
