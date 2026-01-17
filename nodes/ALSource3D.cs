@@ -34,6 +34,12 @@ public partial class ALSource3D : Node3D
 
     public virtual bool Play()
     {
+        if (ALManager.instance == null)
+        {
+            GD.PrintErr($"godot_openal: unable to play the {Name} ALSource3D node because the ALManager has not been initialised yet.");
+            return false;
+        }
+
         if (!ALManager.instance.TryCreateSource(SoundName, true, out var source))
             return false;
 
