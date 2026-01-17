@@ -1,6 +1,6 @@
-﻿using OpenAL.managed;
+using OpenAL.managed;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public unsafe partial class ALManager
 {

@@ -1,6 +1,6 @@
-﻿using OpenAL.managed;
+using OpenAL.managed;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public unsafe partial class ALManager
 {
@@ -8,9 +8,6 @@ public unsafe partial class ALManager
     ALDevice ALDevice;
     ALContext ALContext;
     ALCaptureDevice ALCaptureDevice;
-
-    // TODO - support for multiple reverb zones
-    public ALReverbEffect listenerReverbEffect;
 
     // Device cache
     List<string> OutputDeviceList = [];

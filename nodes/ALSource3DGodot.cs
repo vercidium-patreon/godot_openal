@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public partial class ALSource3D : Node3D
 {
@@ -14,37 +14,40 @@ public partial class ALSource3D : Node3D
     {
         var warnings = new List<string>();
 
-        if (SoundName.Any(char.IsDigit))
+        if (SoundName != null)
         {
-            warnings.Add($"Sound file should not contain digits: {SoundName}");
-        }
-        else if (SoundName.Contains('.'))
-        {
-            string soundPath = $"{Constants.AudioPath}/{SoundName}";
-
-            if (!FileAccess.FileExists(soundPath))
+            if (SoundName.Any(char.IsDigit))
             {
-                warnings.Add($"Sound file not found: {soundPath}");
+                warnings.Add($"Sound file should not contain digits: {SoundName}");
             }
-        }
-        else
-        {
-            // Guess the file type
-            var anyExist = false;
-
-            foreach (var extension in SupportedFileExtensions)
+            else if (SoundName.Contains('.'))
             {
-                string soundPath = $"{Constants.AudioPath}/{SoundName}.{extension}";
+                string soundPath = $"{Constants.AudioPath}/{SoundName}";
 
-                if (FileAccess.FileExists(soundPath))
+                if (!FileAccess.FileExists(soundPath))
                 {
-                    anyExist = true;
-                    break;
+                    warnings.Add($"Sound file not found: {soundPath}");
                 }
             }
+            else
+            {
+                // Guess the file type
+                var anyExist = false;
 
-            if (!anyExist)
-                warnings.Add($"Sound file not found: {SoundName}. File types attempted: {string.Join(", ", SupportedFileExtensions)}");
+                foreach (var extension in SupportedFileExtensions)
+                {
+                    string soundPath = $"{Constants.AudioPath}/{SoundName}.{extension}";
+
+                    if (FileAccess.FileExists(soundPath))
+                    {
+                        anyExist = true;
+                        break;
+                    }
+                }
+
+                if (!anyExist)
+                    warnings.Add($"Sound file not found: {SoundName}. File types attempted: {string.Join(", ", SupportedFileExtensions)}");
+            }
         }
 
         return warnings.ToArray();

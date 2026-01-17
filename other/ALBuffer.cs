@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public class ALBuffer
 {

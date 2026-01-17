@@ -1,6 +1,6 @@
-﻿using System.IO;
+using System.IO;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public class GodotFileStream : Stream
 {

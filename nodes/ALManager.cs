@@ -1,4 +1,4 @@
-namespace OpenALAudio;
+namespace godot_openal;
 
 [Tool]
 public unsafe partial class ALManager : Node
@@ -179,7 +179,9 @@ public unsafe partial class ALManager : Node
         set
         {
             _inputDeviceName = value;
-            RecreateCaptureDevice();
+
+            if (ALCaptureDevice != null)
+                RecreateCaptureDevice();
         }
     }
 

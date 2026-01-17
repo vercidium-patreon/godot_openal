@@ -1,7 +1,7 @@
-﻿using NAudio.Wave;
+using NAudio.Wave;
 using System.IO;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public static class SoundLoader
 {

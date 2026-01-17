@@ -1,6 +1,6 @@
-﻿using System.Linq;
+using System.Linq;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public unsafe partial class ALManager
 {

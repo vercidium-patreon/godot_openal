@@ -1,22 +1,41 @@
+using Godot;
 using OpenAL.managed;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 [Tool]
+[GlobalClass]
 public partial class ALSource3D : Node3D
 {
-    List<ALSource> sources = [];
+    protected List<ALSource> sources = [];
     public ALFilter filter;
+    public ALReverbEffect effect;
 
-    public void UpdateFilter(float gain, float gainHF)
+    public static ALFilter silenceFilter = new(0, 0);
+    public static ALFilter fullFilter = new(1, 1);
+
+
+    public void UpdateFilter(float gain, float gainHF, bool fullReverb = false)
     {
-        filter?.SetGain(gain, gainHF);
+        if (filter == null)
+            filter = new(gain, gainHF);
+        else
+            filter.SetGain(gain, gainHF);
+
+        // For reverb in other rooms, we send the sound's clear audio to the reverb effect,
+        //  then reduce the reverb effect's gain to make it muffled
+        var reverbFilter = fullReverb ? fullFilter : filter;
+
+        foreach (var s in sources)
+            s.SetFilter(effect, filter, fullFilter);
+
+        fullFilter.Delete();
     }
 
-    public void Play()
+    public virtual bool Play()
     {
         if (!ALManager.instance.TryCreateSource(SoundName, true, out var source))
-            return;
+            return false;
 
         // Set initial properties
         source.SetRelative(Relative);
@@ -26,11 +45,11 @@ public partial class ALSource3D : Node3D
         source.SetPitch(Pitch);
         source.SetLooping(Looping);
 
-        filter ??= new(1, 1);
-        source.SetFilter(ALManager.instance.listenerReverbEffect, filter, filter);
+        source.SetFilter(effect, filter, filter);
 
         source.Play();
         sources.Add(source);
+        return true;
     }
 
     public void Stop()

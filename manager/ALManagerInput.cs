@@ -1,9 +1,12 @@
-﻿namespace OpenALAudio;
+namespace godot_openal;
 
 public unsafe partial class ALManager
 {
     void RecreateCaptureDevice()
     {
+        Debug.Assert(MicrophoneEnabled);
+        Debug.Assert(ALCaptureDevice != null);
+
         CloseCaptureDevice();
         InitialiseCaptureDevice();
     }

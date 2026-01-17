@@ -1,6 +1,6 @@
 using OpenAL.managed;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public partial class ALSource3D : Node3D
 {
@@ -24,14 +24,14 @@ public partial class ALSource3D : Node3D
         }
     }
 
-    [Export]
+    [Export(PropertyHint.Range, "0.0,10.0")]
     public float Volume
     {
         get => _volume;
         set => UpdateProperty(ref _volume, value, (v, source) => source.SetGain(v));
     }
 
-    [Export]
+    [Export(PropertyHint.Range, "0.0,10.0")]
     public float Pitch
     {
         get => _pitch;

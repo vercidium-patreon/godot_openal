@@ -1,4 +1,4 @@
-﻿namespace OpenALAudio;
+namespace godot_openal;
 
 public unsafe partial class ALManager
 {
@@ -24,9 +24,6 @@ public unsafe partial class ALManager
 
         // Delete sources before effects
         DestroyAllAudioSources(GetTree().Root);
-
-        listenerReverbEffect.Dispose();
-        listenerReverbEffect = null;
 
         // Delete microphone device
         CloseCaptureDevice();

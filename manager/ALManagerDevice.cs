@@ -1,6 +1,6 @@
-﻿using OpenAL.managed;
+using OpenAL.managed;
 
-namespace OpenALAudio;
+namespace godot_openal;
 
 public unsafe partial class ALManager
 {
@@ -46,11 +46,6 @@ public unsafe partial class ALManager
         // Create an OpenAL capture device
         if (MicrophoneEnabled)
             InitialiseCaptureDevice();
-
-
-        // Create an OpenAL reverb effect
-        Debug.Assert(listenerReverbEffect == null);
-        listenerReverbEffect = new();
     }
 
     void RecreateDevice()

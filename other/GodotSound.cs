@@ -1,4 +1,4 @@
-﻿namespace OpenALAudio;
+namespace godot_openal;
 
 public class GodotSound
 {
