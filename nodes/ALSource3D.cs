@@ -27,7 +27,7 @@ public partial class ALSource3D : Node3D
         var reverbFilter = fullReverb ? fullFilter : filter;
 
         foreach (var s in sources)
-            s.SetFilter(effect, filter, fullFilter);
+            s.SetFilter(effect, filter, reverbFilter);
 
         fullFilter.Delete();
     }
