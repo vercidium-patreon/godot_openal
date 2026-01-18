@@ -36,7 +36,7 @@ public partial class ALSource3D : Node3D
     {
         if (ALManager.instance == null)
         {
-            GD.PrintErr($"godot_openal: unable to play the {Name} ALSource3D node because the ALManager has not been initialised yet.");
+            GD.PushWarning($"godot_openal: unable to play the ALSource3D {Name} because the ALManager has not been initialised yet");
             return false;
         }
 

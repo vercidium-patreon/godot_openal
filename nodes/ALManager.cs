@@ -17,7 +17,7 @@ public unsafe partial class ALManager : Node
 
         if (instance != null && instance != this)
         {
-            GD.PrintErr("ALManager already initialised. You can only have one ALManager node.");
+            GD.PushWarning("godot_openal: the ALManager node is already initialised. You can only have one ALManager node");
             QueueFree();
             return;
         }
@@ -40,7 +40,7 @@ public unsafe partial class ALManager : Node
 
         if (camera == null)
         {
-            GD.PushError("godot_openal: no Camera3D found");
+            GD.PushError("godot_openal: no Camera3D found in the scene");
             return;
         }
         
