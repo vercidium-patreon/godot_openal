@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 const PACKAGE_REFERENCES = """	<ItemGroup>
-		<PackageReference Include="openal_soft_bindings" Version="1.0.5" />
+		<PackageReference Include="openal_soft_bindings" Version="1.0.6" />
 		<PackageReference Include="NAudio" Version="2.2.1" />
 		<PackageReference Include="BunLabs.NAudio.Flac" Version="2.0.1" />
 		<PackageReference Include="NVorbis" Version="0.10.5" />
@@ -12,7 +12,8 @@ const PROPERTY_GROUP = """	<PropertyGroup>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>"""
 
-const DLL_SOURCE = "addons/godot_openal/soft_oal.dll"
+const DLL_SOURCE_WINDOWS = "addons/godot_openal/soft_oal.dll"
+const DLL_SOURCE_LINUX = "addons/godot_openal/libopenal.so.1"
 
 func _enter_tree():
 	add_custom_type("ALSource3D", "Node3D", preload("nodes/ALSource3D.cs"), null)
@@ -83,19 +84,31 @@ func _setup_project():
 	_copy_dll()
 
 func _copy_dll():
-	var project_name = ProjectSettings.get_setting("application/config/name")
-	var dest_path = "res://soft_oal.dll"
-	
-	# Check if DLL already exists at destination
+	var source_path: String
+	var dest_path: String
+	var lib_name: String
+
+	if OS.get_name() == "Windows":
+		source_path = DLL_SOURCE_WINDOWS
+		dest_path = "res://soft_oal.dll"
+		lib_name = "soft_oal.dll"
+	elif OS.get_name() == "Linux":
+		source_path = DLL_SOURCE_LINUX
+		dest_path = "res://libopenal.so.1"
+		lib_name = "libopenal.so.1"
+	else:
+		return
+
+	# Check if library already exists at destination
 	if FileAccess.file_exists(dest_path):
 		return
-	
-	# Copy the DLL
-	if FileAccess.file_exists(DLL_SOURCE):
-		var result = DirAccess.copy_absolute(DLL_SOURCE, dest_path)
+
+	# Copy the library
+	if FileAccess.file_exists(source_path):
+		var result = DirAccess.copy_absolute(source_path, dest_path)
 		if result == OK:
-			print("godot_openal: Copied soft_oal.dll to project root")
+			print("godot_openal: Copied %s to project root" % lib_name)
 		else:
-			push_error("godot_openal: Failed to copy soft_oal.dll: ", result)
+			push_error("godot_openal: Failed to copy %s: %s" % [lib_name, result])
 	else:
-		push_error("godot_openal: Source DLL not found at ", DLL_SOURCE)
+		push_error("godot_openal: Source library not found at ", source_path)
