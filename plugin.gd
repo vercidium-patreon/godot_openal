@@ -56,7 +56,7 @@ func _setup_project():
 	
 	# Check if .csproj exists
 	if not FileAccess.file_exists(csproj_path):
-		push_error("[godot_openal] No C# solution found. Please create a C# solution (Project → Tools → C# → Create C# Solution)") and then re-enable this plugin
+		push_error("[godot_openal] No C# solution found. Please create a C# solution (Project → Tools → C# → Create C# Solution) and then re-enable this plugin")
 		return
 	
 	# Read the .csproj file
