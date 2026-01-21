@@ -53,7 +53,7 @@ public unsafe partial class ALManager
 
         if (dir == null)
         {
-            GD.PushError($"godot_openal: failed to load audio files from the folder: {directoryPath}");
+            GD.PushError($"[godot_openal] failed to load audio files from the folder: {directoryPath}");
             return;
         }
 
@@ -80,7 +80,7 @@ public unsafe partial class ALManager
                 if (!Godot.FileAccess.FileExists(fullPath))
                 {
                     Debug.Assert(false);
-                    GD.PushError($"godot_openal: failed to load sound: {fullPath}");
+                    GD.PushError($"[godot_openal] failed to load sound: {fullPath}");
                     fileOrDirName = dir.GetNext();
                     continue;
                 }

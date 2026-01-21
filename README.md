@@ -14,7 +14,7 @@ This plugin provides custom nodes for using OpenAL Soft directly in Godot, bypas
 If you get the below error, make sure you've created a C# solution first (step 3 above):
 
 ```
-godot_openal: No C# solution found. Please create a C# solution first (Project → Tools → C# → Create C# Solution)
+[godot_openal] No C# solution found. Please create a C# solution first (Project → Tools → C# → Create C# Solution)
 ```
 
 After creating a C# project, disable and enable the `godot_openal` plugin in `Project > Project Settings > Plugins`.

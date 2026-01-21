@@ -25,6 +25,10 @@ public unsafe partial class ALManager
         // Delete sources before effects
         DestroyAllAudioSources(GetTree().Root);
 
+        // Invoke device destroyed callbacks (e.g. for cleaning up reverb effects)
+        foreach (var callback in OnDeviceDestroyedCallbacks)
+            callback.Invoke();
+
         // Delete microphone device
         CloseCaptureDevice();
         ALCaptureDevice = null;

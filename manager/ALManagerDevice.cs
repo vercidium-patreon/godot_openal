@@ -57,6 +57,10 @@ public unsafe partial class ALManager
         CancelLoadingAndDestroy();
         CreateDeviceAndContext();
         LoadAudioFiles();
+
+        // Invoke device recreated callbacks (e.g. for recreating reverb effects)
+        foreach (var callback in OnDeviceRecreatedCallbacks)
+            callback.Invoke();
     }
 
     void RefreshDeviceLists()
