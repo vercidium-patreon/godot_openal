@@ -40,16 +40,17 @@ The plugin setup script in `addons/godot_openal/plugin.gd` will perform some set
 </ItemGroup>
 ```
 
-Second, it will copy `soft_oal.dll` to your project root, which is where your project searches for `.dll` files when it runs.
+Second, it will copy `soft_oal.dll` or `libopenal.so.1` (depending on your operating system) to your project root, which is where your project searches for `.dll` files when it runs.
 
-### 2. Create an ALManager
-In your main scene, add an `ALManager` node:
+### 2. Customise the ALManager
+
+The `addons/godot_openal/autoload/ALManagerAutoload.tscn` scene contains the global `ALManager` node.
 
 ![Scene tree with ALManager child nodes](docs/al_manager_node.png)
 
-The `ALManager` node overrides Godot's inbuilt audio system, and has settings for controlling volume, enabling HRTF, output/input device, etc.
+This `ALManager` node overrides Godot's inbuilt audio system, and has settings for controlling volume, enabling HRTF, output/input device, etc.
 
-To verify your installation worked, the Output Device Name field should be populated in the inspector
+To verify your installation worked, the Output Device Name field should be populated in the inspector.
 
 ### 2. Play a Sound
 

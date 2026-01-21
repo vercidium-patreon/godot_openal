@@ -1,3 +1,9 @@
 # Ignore Godot files
 .godot/
 *.uid
+
+# User-customized autoload scene (copied from the .example file)
+autoload/ALManagerAutoload.tscn
+
+# Claude permission files
+.claude/

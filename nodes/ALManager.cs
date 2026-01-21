@@ -8,6 +8,18 @@ public unsafe partial class ALManager : Node
 
     public override void _Ready()
     {
+        // Log to both - in case we're launched from vs2026 or from the Godot Editor
+        OpenAL.Logger.Log = (s) =>
+        {
+            Console.WriteLine(s);
+            GD.Print(s);
+        };
+        OpenAL.Logger.Error = (s) =>
+        {
+            Console.Error.WriteLine(s);
+            GD.PushError(s);
+        };
+
         // Ensure lists are up to date
         RefreshDeviceLists();
         NotifyPropertyListChanged();
