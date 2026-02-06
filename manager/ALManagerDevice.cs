@@ -16,7 +16,6 @@ public unsafe partial class ALManager
         if (OutputDeviceName == "")
             return;
 
-
         // Create an OpenAL device
         ALDevice = new(OutputDeviceName);
 

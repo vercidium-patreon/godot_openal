@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 const PACKAGE_REFERENCES = """	<ItemGroup>
-		<PackageReference Include="openal_soft_bindings" Version="1.0.7" />
+		<PackageReference Include="openal_soft_bindings" Version="1.0.8" />
 		<PackageReference Include="NAudio" Version="2.2.1" />
 		<PackageReference Include="BunLabs.NAudio.Flac" Version="2.0.1" />
 		<PackageReference Include="NVorbis" Version="0.10.5" />
