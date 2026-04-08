@@ -6,7 +6,7 @@ public unsafe partial class ALManager : Node
     public static ALManager instance;
     public bool Initialised => ALDevice != null;
 
-    public override void _Ready()
+    public override void _EnterTree()
     {
         // Log to both - in case we're launched from vs2026 or from the Godot Editor
         OpenAL.Logger.Log = (message) =>
@@ -272,7 +272,7 @@ public unsafe partial class ALManager : Node
     public delegate void MicrophoneDataCallback(IntPtr samples, int sampleCount);
     public event MicrophoneDataCallback OnMicrophoneData;
 
-    void UpdateProperty<T>(ref T field, T value, Action<T> updateAction = null) where T : struct
+    static void UpdateProperty<T>(ref T field, T value, Action<T> updateAction = null) where T : struct
     {
         if (!field.Equals(value))
         {

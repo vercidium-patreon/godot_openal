@@ -1,5 +1,3 @@
-using OpenAL.managed;
-
 namespace godot_openal;
 
 public unsafe partial class ALManager

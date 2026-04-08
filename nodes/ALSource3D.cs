@@ -1,6 +1,3 @@
-using Godot;
-using OpenAL.managed;
-
 namespace godot_openal;
 
 [Tool]

@@ -1,5 +1,3 @@
-using OpenAL.managed;
-
 namespace godot_openal;
 
 public partial class ALSource3D : Node3D
