@@ -14,6 +14,9 @@ public partial class ALSource3D : Node3D
 
     public void UpdateFilter(float gain, float gainHF, bool fullReverb = false)
     {
+        if (!GodotOpenALEnabled)
+            return;
+
         if (filter == null)
             filter = new(gain, gainHF);
         else
@@ -25,15 +28,20 @@ public partial class ALSource3D : Node3D
 
         foreach (var s in sources)
             s.SetFilter(effect, filter, reverbFilter);
-
-        fullFilter.Delete();
     }
+
+    bool alWarningLogged = false;
 
     public virtual bool Play()
     {
-        if (ALManager.instance == null)
+        if (!GodotOpenALEnabled)
         {
-            GD.PushWarning($"[godot_openal] unable to play the ALSource3D {Name} because the ALManager has not been initialised yet");
+            if (!alWarningLogged)
+            {
+                GD.PushWarning($"[godot_openal] unable to play the ALSource3D {Name} because the ALManager has not been initialised yet");
+                alWarningLogged = true;
+            }
+
             return false;
         }
 
