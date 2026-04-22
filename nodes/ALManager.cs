@@ -48,19 +48,6 @@ public unsafe partial class ALManager : Node
         if (Engine.IsEditorHint())
             return;
 
-        var camera = GetViewport().GetCamera3D();
-
-        if (camera == null)
-        {
-            GD.PushError("[godot_openal] no Camera3D found in the scene");
-            return;
-        }
-        
-        var cameraPitch = camera.GlobalRotation.X;
-        var cameraYaw = camera.GlobalRotation.Y;
-
-        UpdateListener(camera.GlobalPosition, cameraPitch, cameraYaw);
-
         ALContext.Process();
         DisposeFinishedSources();
 
@@ -94,6 +81,38 @@ public unsafe partial class ALManager : Node
     int _inputDeviceIndex;
     bool _microphoneEnabled;
     int _microphoneThreshold;
+    Vector3 _listenerPosition;
+    Vector3 _listenerVelocity;
+    float _listenerPitch;
+    float _listenerYaw;
+
+    [Export]
+    public Vector3 ListenerPosition
+    {
+        get => _listenerPosition;
+        set => UpdateProperty(ref _listenerPosition, value, SetListenerPosition);
+    }
+
+    [Export]
+    public Vector3 ListenerVelocity
+    {
+        get => _listenerVelocity;
+        set => UpdateProperty(ref _listenerVelocity, value, SetListenerVelocity);
+    }
+
+    [Export]
+    public float ListenerPitch
+    {
+        get => _listenerPitch;
+        set => UpdateProperty(ref _listenerPitch, value, SetListenerPitch);
+    }
+
+    [Export]
+    public float ListenerYaw
+    {
+        get => _listenerYaw;
+        set => UpdateProperty(ref _listenerYaw, value, SetListenerYaw);
+    }
 
     [Export]
     public float MasterVolume

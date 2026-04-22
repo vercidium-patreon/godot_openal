@@ -2,6 +2,28 @@ namespace godot_openal;
 
 public unsafe partial class ALManager
 {
+    public void SetListenerPosition(Vector3 position) => AL.Listenerfv(AL.AL_POSITION, [position.X, position.Y, position.Z]);
+    public void SetListenerVelocity(Vector3 velocity) => AL.Listenerfv(AL.AL_VELOCITY, [velocity.X, velocity.Y, velocity.Z]);
+
+    public void SetListenerPitch(float pitch)
+    {
+        var orientation = Helper.PitchYawToVector3(pitch, _listenerYaw);
+        var up = Helper.PitchYawToVector3(pitch + MathF.PI / 2, _listenerYaw);
+
+        AL.Listenerfv(AL.AL_ORIENTATION, [orientation.X, orientation.Y, orientation.Z, up.X, up.Y, up.Z]);
+
+        _listenerPitch = pitch;
+    }
+    public void SetListenerYaw(float yaw)
+    {
+        var orientation = Helper.PitchYawToVector3(_listenerPitch, yaw);
+        var up = Helper.PitchYawToVector3(_listenerPitch + MathF.PI / 2, yaw);
+
+        AL.Listenerfv(AL.AL_ORIENTATION, [orientation.X, orientation.Y, orientation.Z, up.X, up.Y, up.Z]);
+
+        _listenerYaw = yaw;
+    }
+
     public void SetListenerGain(float gain) => AL.Listenerf(AL.AL_GAIN, gain);
     public void SetHRTFEnabled(bool enabled) => RecreateDevice();
     public void SetSampleRate(int sampleRate) => RecreateDevice();
