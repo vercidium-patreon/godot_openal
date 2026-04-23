@@ -53,7 +53,7 @@ public unsafe partial class ALManager
 
         if (dir == null)
         {
-            GD.PushError($"[godot_openal] failed to load audio files from the folder: {directoryPath}");
+            LogError($"Failed to load audio files from folder: {directoryPath}");
             return;
         }
 
@@ -79,8 +79,7 @@ public unsafe partial class ALManager
             {
                 if (!Godot.FileAccess.FileExists(fullPath))
                 {
-                    Debug.Assert(false);
-                    GD.PushError($"[godot_openal] failed to load sound: {fullPath}");
+                    LogError($"Failed to load sound: {fullPath}");
                     fileOrDirName = dir.GetNext();
                     continue;
                 }

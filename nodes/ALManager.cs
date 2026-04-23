@@ -29,7 +29,7 @@ public unsafe partial class ALManager : Node
 
         if (instance != null && instance != this)
         {
-            GD.PushWarning("[godot_openal] the ALManager node is already initialised. You can only have one ALManager node");
+            LogWarning($"The ALManager node is already initialised. You can only have one ALManager node");
             QueueFree();
             return;
         }
@@ -303,6 +303,6 @@ public unsafe partial class ALManager : Node
     void CantChangeAtRuntime<T>(string property, T currentValue, T newValue)
     {
         if (Initialised)
-            GD.PushWarning($"[OpenAL] The {property} property cannot be changed at runtime - please restart for changes to take effect. Current value: {currentValue}, new value: {newValue}");
+            LogWarning($"The {property} property cannot be changed at runtime - please restart for changes to take effect. Current value: {currentValue}, new value: {newValue}");
     }
 }

@@ -24,7 +24,7 @@ public unsafe partial class ALManager
         // No microphones available
         if (InputDeviceList.Count == 0)
         {
-            GD.PushWarning($"[OpenAL] Unable to initialise input device as there are no devices available");
+            LogWarning($"Unable to initialise input device as there are no devices available");
             return;
         }
 

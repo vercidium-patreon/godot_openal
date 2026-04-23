@@ -78,7 +78,7 @@ public unsafe partial class ALManager
             // Handle disconnect - switch to a different device
             else if (!InputDeviceList.Contains(InputDeviceName))
             {
-                GD.PushWarning($"[OpenAL] Input device '{InputDeviceName}' disconnected. Switching to '{OutputDeviceList[0]}'");
+                LogWarning($"Input device '{InputDeviceName}' disconnected. Switching to '{OutputDeviceList[0]}'");
                 InputDeviceName = InputDeviceList[0];
             }
         }
@@ -99,7 +99,7 @@ public unsafe partial class ALManager
             // Handle disconnect - switch to a different device
             else if (!OutputDeviceList.Contains(OutputDeviceName))
             {
-                GD.PushWarning($"[OpenAL] Output device '{OutputDeviceName}' disconnected. Switching to '{OutputDeviceList[0]}'");
+                LogWarning($"Output device '{OutputDeviceName}' disconnected. Switching to '{OutputDeviceList[0]}'");
                 OutputDeviceName = OutputDeviceList[0];
             }
         }

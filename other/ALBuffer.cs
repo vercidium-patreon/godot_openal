@@ -33,7 +33,7 @@ public class ALBuffer
         // Bail if it failed to load (corrupt or unsupported sound file)
         if (data == null || data.byteCount == 0)
         {
-            GD.PushWarning($"[OpenAL] Cannot buffer data for {fileName} as no data was loaded from disk");
+            LogWarning($"Cannot buffer data for {fileName} as no data was loaded from disk");
             return;
         }
 
@@ -86,7 +86,7 @@ public class ALBuffer
         // Out of memory
         if (sourceID == 0)
         {
-            GD.PushWarning("[OpenAL] Failed to create source. Possibly out of memory.");
+            LogWarning($"Failed to create source - likely too many sources have been created");
             source = null;
             return false;
         }

@@ -36,7 +36,7 @@ public static class SoundLoader
         catch (Exception e)
         {
             Debug.Assert(false);
-            GD.PushWarning($"[OpenAL] Failed to load sound: {fileName}. Error: {e}");
+            LogError($"Failed to load sound: {fileName}. Error: {e}");
 
             return new SoundData();
         }

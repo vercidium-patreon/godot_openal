@@ -30,15 +30,27 @@ public partial class ALSource3D : Node3D
             s.SetFilter(effect, filter, reverbFilter);
     }
 
+    bool soundNameErrorLogged = false;
     bool alWarningLogged = false;
 
     public virtual bool Play()
     {
+        if (SoundName == null)
+        {
+            if (!soundNameErrorLogged)
+            {
+                LogWarning($"Unable to play the ALSource3D {Name} because its SoundName property is not set");
+                soundNameErrorLogged = true;
+            }
+
+            return false;
+        }
+
         if (!GodotOpenALEnabled)
         {
             if (!alWarningLogged)
             {
-                GD.PushWarning($"[godot_openal] unable to play the ALSource3D {Name} because the ALManager has not been initialised yet");
+                LogWarning($"Unable to play the ALSource3D {Name} because the ALManager has not been initialised yet. Ensure the autoload is set up correctly.");
                 alWarningLogged = true;
             }
 
