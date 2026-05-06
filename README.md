@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repository is deprecated. See the new repository at [vercidium-audio/godot-openal](https://github.com/vercidium-audio/godot-openal)
+
 # OpenAL Plugin for Godot
 
 This plugin provides custom nodes for using OpenAL Soft directly in Godot, bypassing Godot's built-in audio system.
